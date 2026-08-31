@@ -2,27 +2,38 @@
 
 A lightweight Linux server health monitoring script written in Bash.
 
-The project checks essential system resources and services to provide a quick overview of a server's health directly from the terminal.
+The script checks essential system resources and network connectivity, detects requested applications, and provides a quick overview of a server's health directly from the terminal.
 
-## Planned Features
+## Features
 
-* [ ] CPU usage monitoring
-* [ ] Memory usage monitoring
-* [ ] Disk usage monitoring
-* [ ] Service status checks
-* [ ] Internet connectivity checks
-* [ ] Configurable warning and critical thresholds
-* [ ] Health status classification
-* [ ] Logging
-* [ ] Command-line arguments
-* [ ] Automated monitoring with cron
-* [ ] Alerts for critical conditions
+* CPU usage monitoring
+* Memory usage monitoring
+* Disk usage monitoring
+* Health status classification
+
+  * Normal
+  * Warning
+  * Critical
+* Internet connectivity check
+* Application detection
+* Application executable path detection
+* Command-line arguments for checking applications
+* Colored health status indicators
+* Overall server health status
+* Linux system information
+
+  * Current user
+  * Hostname
+  * Operating system
+  * Uptime
+* ShellCheck validated
 
 ## Requirements
 
 * Linux
 * Bash
-* `sysstat` *(required for some CPU monitoring functionality)*
+* `bc`
+* `ping`
 
 ## Usage
 
@@ -39,13 +50,50 @@ Make the script executable:
 chmod +x server-health.sh
 ```
 
-Run it:
+Run the health checker:
 
 ```bash
 ./server-health.sh
 ```
 
-## Example
+### Check Applications
+
+Applications can be passed as command-line arguments:
+
+```bash
+./server-health.sh nginx docker node java
+```
+
+The script checks whether each application is available as a command on the system and displays its executable path when installed.
+
+Example:
+
+```text
+Services & Applications
+----------------------------------------
+Application    Status          Path
+----------------------------------------
+bash           Installed       /usr/bin/bash
+node           Installed       /usr/bin/node
+nginx          Not Installed   -
+docker         Not Installed   -
+```
+
+If no applications are specified:
+
+```bash
+./server-health.sh
+```
+
+the script reports:
+
+```text
+Services & Applications
+----------------------------------------
+No applications specified
+```
+
+## Example Output
 
 ```text
 ========================================
@@ -54,67 +102,120 @@ Run it:
 
 System
 ----------------------------------------
-Current User   : user
-Hostname       : server
-OS             : Linux
-Uptime         : 3 days
+Current User   : 
+Hostname       : 
+OS             : 
+Uptime         : 
 
 CPU
-----------------------------------------
-Usage          : 23%
-Status         : OK
+-----------------------------------------
+Usage          :
+Status         : 
 
 Memory
 ----------------------------------------
-Used           :
-Usage          :
-Status         :
+Total          : 
+Available      : 
+Usage          : 
+Status         : 
 
 Disk
 ----------------------------------------
-/              :
-Status         :
+Total          : 
+Used           : 
+Available      : 
+Usage          : 
+Status         : 
 
-Services
+Services & Applications
 ----------------------------------------
-nginx          :
-mongodb        :
-docker         :
+Application    Status          Path
+----------------------------------------
+bash           Installed       /usr/bin/bash
+node           Installed       /usr/bin/node
+docker         Not Installed   -
 
 Network
 ----------------------------------------
-Internet       :
+Internet       : Connected
+Status         : Normal
 
 ========================================
-Overall Status:
+Overall Status: Normal
 ========================================
 ```
 
-## Project Goals
+## Health Status
 
-This project is being developed as part of my DevOps and Linux learning journey.
+The script classifies monitored resources according to their usage:
 
-The goal is to build the utility incrementally while learning practical Bash scripting, Linux system administration, process management, resource monitoring, logging, automation, and server troubleshooting.
+| Status   | Meaning                                        |
+| -------- | ---------------------------------------------- |
+| Normal   | Resource usage is within the healthy range     |
+| Warning  | Resource usage is approaching a critical level |
+| Critical | Resource usage has reached a critical level    |
+
+Disk usage currently uses:
+
+```text
+< 70%     Normal
+70–89%    Warning
+≥ 90%     Critical
+```
+
+The overall status follows the highest severity detected:
+
+```text
+Critical
+    ↑
+Warning
+    ↑
+Normal
+```
+
+If any monitored resource is Critical, the overall status becomes Critical. Otherwise, if any resource is Warning, the overall status becomes Warning. If neither condition occurs, the overall status remains Normal.
+
+## Project Structure
+
+```text
+Server-health-check/
+│
+├── server-health.sh
+└── README.md
+```
+
+## Development
+
+This project is being developed incrementally as part of my DevOps and Linux learning journey.
+
+The current version focuses on practical Bash scripting concepts including:
+
+* Variables
+* Command substitution
+* Conditional statements
+* Loops
+* Functions
+* Command-line arguments
+* Exit statuses
+* Text processing with `awk`
+* Linux system commands
+* ANSI terminal colors
+* Basic server monitoring
+
+The script is tested locally on Linux and validated using ShellCheck.
 
 ## Roadmap
 
-The project will evolve from a basic Bash script into a more complete Linux server monitoring utility.
+Future improvements may include:
 
-```text
-System Information
-        ↓
-Resource Monitoring
-        ↓
-Service Monitoring
-        ↓
-Thresholds & Health Status
-        ↓
-Logging
-        ↓
-Automation
-        ↓
-Alerts
-```
+* [ ] Configurable warning and critical thresholds
+* [ ] Service/process monitoring
+* [ ] Logging
+* [ ] Automated monitoring with cron
+* [ ] Alerts for critical conditions
+* [ ] More detailed network monitoring
+* [ ] Remote server monitoring
+* [ ] Configuration file support
 
 ## License
 
