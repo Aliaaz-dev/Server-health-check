@@ -175,6 +175,8 @@ Normal
 
 If any monitored resource is Critical, the overall status becomes Critical. Otherwise, if any resource is Warning, the overall status becomes Warning. If neither condition occurs, the overall status remains Normal.
 
+The application checker currently detects commands available in the user's PATH; it does not detect every piece of software installed somewhere on the filesystem.
+
 ## Project Structure
 
 ```text
